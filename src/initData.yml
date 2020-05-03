@@ -1,0 +1,49 @@
+rovers:
+  curiosity:
+    cameras:
+      - 'FHAZ'
+      - 'RHAZ'
+      - 'MAST'
+      - 'CHEMCAM'
+      - 'MAHLI'
+      - 'MARDI'
+      - 'NAVCAM'
+    landingDay:
+      '6/8/2012'
+  opportunity:
+    cameras:
+      - 'FHAZ'
+      - 'RHAZ'
+      - 'NAVCAM'
+      - 'PANCAM'
+      - 'MINITES'
+    landingDay:
+      '25/1/2004'
+  spirit:
+    cameras:
+      - 'FHAZ'
+      - 'RHAZ'
+      - 'NAVCAM'
+      - 'PANCAM'
+      - 'MINITES'
+    landingDay:
+      '4/1/2004'
+cameras:
+  - FHAZ:
+      name: 'Front Hazard Avoidance Camera'
+  - RHAZ:
+      name: 'Rear Hazard Avoidance Camera'
+  - MAST:
+      name: 'Mast Camera'
+  - CHEMCAM:
+      name: 'Chemistry and Camera Complex'
+  - MAHLI:
+      name: 'Mars Hand Lens Imager'
+  - MARDI:
+      name: 'Mars Descent Imager'
+  - NAVCAM:
+      name: 'Navigation Camera'
+  - PANCAM:
+      name: 'Panoramic Camera'
+  - MINITES:
+      name: 'Miniature Thermal Emission Spectrometer (Mini-TES)'
