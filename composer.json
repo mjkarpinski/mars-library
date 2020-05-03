@@ -9,8 +9,11 @@
         }
     ],
     "autoload": {
-        "psr-0": {
-            "MarsRovers": "src/"
+        "psr-4": {
+            "MarsRovers\\": "src/"
         }
+    },
+    "require": {
+        "symfony/yaml": "^5.0"
     }
 }
