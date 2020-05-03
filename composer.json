@@ -1,0 +1,16 @@
+{
+    "name": "karp-space/nasa-mars",
+    "description": "Application for consuming NASA's API for Rovers on Mars",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Michael Karpinski",
+            "email": "karp@karp.space"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "MarsRovers": "src/"
+        }
+    }
+}
