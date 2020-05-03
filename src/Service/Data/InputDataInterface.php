@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MarsRovers\Service\Data;
 
-interface InputDataInterface {
+interface InputDataInterface
+{
     function getRovers(): array;
 }

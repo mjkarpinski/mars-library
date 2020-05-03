@@ -1,19 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MarsRovers;
 
 use MarsRovers\Request\Picture as PictureRequest;
-use MarsRovers\Model\Picture\Picture as PictureModel;
+use MarsRovers\Request\Picture;
+use MarsRovers\Response\Json as JsonResponse;
+use MarsRovers\Response\ResponseInterface;
+use MarsRovers\Service\Data\DataFormatter;
 use MarsRovers\Service\Data\FileInputData;
 use MarsRovers\Service\Data\InputDataInterface;
+use MarsRovers\Service\NasaApi;
+use Exception;
 
-class MarsRover {
-    private $activeRover;
-    private $activeCamera;
-    private $currentSol;
-    private $availableRovers;
-    private $apiKey;
+class MarsRover
+{
+    private $nasaApi;
     private $inputData;
 
     public function __construct(
@@ -21,7 +24,7 @@ class MarsRover {
         InputDataInterface $inputData = null
     ) {
        $this->inputData = $inputData ?: new FileInputData(__DIR__ . '/initData.yml');
-       $this->apiKey = $apiKey;
+       $this->nasaApi = new NasaApi($apiKey);
     }
 
     public function getAvailableRovers(): array
@@ -29,10 +32,22 @@ class MarsRover {
         return $this->inputData->getRovers();
     }
 
-    public function getPicture(string $rover, string $camera, int $sol): PictureModel
+    public function getPictures(string $rover, string $camera, int $sol, ResponseInterface $responseType = null)
     {
-        return (new PictureRequest($rover, $camera, $sol, $this->inputData))->getPicture();
+        if ($responseType === null) {
+            $responseType = new JsonResponse();
+        }
+
+        try {
+            $responseType->render(
+                DataFormatter::nasaToPictures(
+                    $this->nasaApi->call(
+                        new PictureRequest($rover, $camera, $sol, $this->inputData)
+                    )
+                )
+            );
+        } catch (Exception $e) {
+            $responseType->render(['Error' => $e->getMessage()]);
+        }
     }
-
-
 }

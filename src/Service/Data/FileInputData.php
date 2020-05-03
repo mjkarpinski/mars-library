@@ -11,8 +11,8 @@ use Symfony\Component\Yaml\Yaml;
 use Exception;
 use DateTimeImmutable;
 
-class FileInputData implements InputDataInterface {
-
+class FileInputData implements InputDataInterface
+{
     private $rovers;
     private $cameras;
     private $filePath;
@@ -47,15 +47,19 @@ class FileInputData implements InputDataInterface {
         return $data;
     }
 
-    private function setupRovers($data): void {
+    private function setupRovers($data): void
+    {
+
         foreach ($data['rovers'] as $name => $rover) {
+            $availableCameras = [];
+
+            foreach ($rover['cameras'] as $camera) {
+                $availableCameras[$camera] = $this->cameras[$camera];
+            }
+
             $this->rovers[$name] = RoverFactory::create(
                 $name,
-                array_map(
-                    function ($camera) {
-                        return $this->cameras[$camera];
-                    }, $rover['cameras']
-                ),
+                $availableCameras,
                 DateTimeImmutable::createFromFormat(
                     'd/m/Y',
                     $rover['landingDate'])

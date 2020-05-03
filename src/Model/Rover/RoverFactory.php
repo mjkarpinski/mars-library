@@ -6,8 +6,9 @@ namespace MarsRovers\Model\Rover;
 
 use DateTimeImmutable;
 
-class RoverFactory {
-    public static function create(string $name, array $availableCameras, DateTimeImmutable $landingDate)
+class RoverFactory
+{
+    public static function create(string $name, array $availableCameras, DateTimeImmutable $landingDate): Rover
     {
         return new Rover($name, $availableCameras, $landingDate);
     }

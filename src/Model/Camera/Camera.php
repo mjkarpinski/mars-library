@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace MarsRovers\Model\Camera;
 
-class Camera {
+class Camera
+{
     private $name = '';
     private $code = '';
 
