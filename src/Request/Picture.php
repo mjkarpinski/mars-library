@@ -13,8 +13,7 @@ class Picture
 {
     /** @var $rover Rover */
     private $rover;
-    private $roverName;
-    private $cameraName;
+
     private $sol;
     private $data;
 
@@ -23,17 +22,18 @@ class Picture
      */
     public function __construct(string $roverName, string $cameraName, int $sol, InputDataInterface $data)
     {
-        $this->roverName = $roverName;
-        $this->cameraName = $cameraName;
+        $roverName = strtolower($roverName);
+        $cameraName = strtoupper($cameraName);
+
         $this->sol = $sol;
         $this->data = $data;
 
         if (!PictureValidator::validate($roverName, $cameraName, $data)) {
-            throw new BadInputException();
+            throw new BadInputException('Bad rover name or camera not available');
         }
 
-        $this->rover = $this->data->getRovers()[$this->roverName];
-        $this->rover->setActiveCamera($this->cameraName);
+        $this->rover = $this->data->getRovers()[$roverName];
+        $this->rover->setActiveCamera($cameraName);
     }
 
     public function getRover(): Rover

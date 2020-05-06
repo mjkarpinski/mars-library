@@ -47,10 +47,10 @@ class FileInputData implements InputDataInterface
             $availableCameras = [];
 
             foreach ($rover['cameras'] as $camera) {
-                $availableCameras[strtoupper($camera)] = $this->cameras[$camera];
+                $availableCameras[$camera] = $this->cameras[$camera];
             }
 
-            $this->rovers[strtolower($name)] = RoverFactory::create(
+            $this->rovers[$name] = RoverFactory::create(
                 $name,
                 $availableCameras,
                 DateTimeImmutable::createFromFormat(
