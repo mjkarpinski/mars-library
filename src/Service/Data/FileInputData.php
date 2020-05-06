@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace MarsRovers\Service\Data;
 
+use MarsRovers\Exception\ParseException;
 use MarsRovers\Validator\InputDataValidator;
 use MarsRovers\Model\Rover\RoverFactory;
 use MarsRovers\Model\Camera\CameraFactory;
+use Symfony\Component\Yaml\Exception\ExceptionInterface;
 use Symfony\Component\Yaml\Yaml;
-use Exception;
 use DateTimeImmutable;
 
 class FileInputData implements InputDataInterface
@@ -22,34 +23,26 @@ class FileInputData implements InputDataInterface
         $this->filePath = $filePath;
     }
 
-    public function getRovers(): array
-    {
-        $data = $this->getData();
-
-        $this->setupCameras($data);
-        $this->setupRovers($data);
-
-        return $this->rovers;
-    }
-
+    /**
+     * @throws ParseException
+     */
     private function getData(): array
     {
         try {
             $data = Yaml::parseFile($this->filePath);
-        } catch (Exception $e) {
-            return ['error' => $e->getMessage()];
+        } catch (ExceptionInterface $e) {
+            throw new ParseException('Parsing file failed');
         }
 
         if (!InputDataValidator::validate($data)) {
-            return ['error' => 'Input data invalid'];
+            throw new ParseException('Data missing key fields');
         }
 
         return $data;
     }
 
-    private function setupRovers($data): void
+    private function setupRovers(array $data): void
     {
-
         foreach ($data['rovers'] as $name => $rover) {
             $availableCameras = [];
 
@@ -72,5 +65,14 @@ class FileInputData implements InputDataInterface
         foreach ($data['cameras'] as $code => $camera) {
             $this->cameras[$code] = CameraFactory::create($camera['name'], $code);
         }
+    }
+
+    public function getRovers(): array
+    {
+        $data = $this->getData($this->filePath);
+        $this->setupRovers($data);
+        $this->setupCameras($data);
+
+        return $this->rovers;
     }
 }

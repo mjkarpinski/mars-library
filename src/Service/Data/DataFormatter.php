@@ -8,7 +8,8 @@ use MarsRovers\Model\Picture\Picture;
 
 class DataFormatter
 {
-    public static function nasaToPictures($data) {
+    public static function nasaToPictures($data)
+    {
         return array_map(function($photo) {
             return new Picture(
                 $photo['img_src'],

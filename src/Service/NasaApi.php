@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MarsRovers\Service;
 
+use MarsRovers\Exception\BadApiKeyException;
 use MarsRovers\Request\Picture as PictureRequest;
 
 class NasaApi {
@@ -29,7 +30,13 @@ class NasaApi {
 
     public function call(PictureRequest $pictureRequest): array
     {
-        var_dump($this->buildUrl($pictureRequest));
-        return json_decode(file_get_contents($this->buildUrl($pictureRequest)), true);
+        $url = $this->buildUrl($pictureRequest);
+        $headers = get_headers($url, 1);
+
+        if ($headers[0] == 'HTTP/1.1 403 Forbidden') {
+            throw new BadApiKeyException('Wrong Api key');
+        }
+
+        return json_decode(file_get_contents($url), true);
     }
 }

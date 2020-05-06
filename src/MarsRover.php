@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MarsRovers;
 
+use MarsRovers\Exception\MarsRoverException;
 use MarsRovers\Request\Picture as PictureRequest;
 use MarsRovers\Request\Picture;
 use MarsRovers\Response\Json as JsonResponse;
@@ -12,18 +13,15 @@ use MarsRovers\Service\Data\DataFormatter;
 use MarsRovers\Service\Data\FileInputData;
 use MarsRovers\Service\Data\InputDataInterface;
 use MarsRovers\Service\NasaApi;
-use Exception;
 
 class MarsRover
 {
     private $nasaApi;
     private $inputData;
 
-    public function __construct(
-        string $apiKey,
-        InputDataInterface $inputData = null
-    ) {
-       $this->inputData = $inputData ?: new FileInputData(__DIR__ . '/initData.yml');
+    public function __construct(string $apiKey, InputDataInterface $inputData = null)
+    {
+       $this->inputData = $inputData;
        $this->nasaApi = new NasaApi($apiKey);
     }
 
@@ -34,20 +32,25 @@ class MarsRover
 
     public function getPictures(string $rover, string $camera, int $sol, ResponseInterface $responseType = null)
     {
-        if ($responseType === null) {
-            $responseType = new JsonResponse();
-        }
+        $responseType = $responseType ?: new JsonResponse();
 
         try {
-            $responseType->render(
+            return $responseType->render(
                 DataFormatter::nasaToPictures(
                     $this->nasaApi->call(
-                        new PictureRequest($rover, $camera, $sol, $this->inputData)
+                        new PictureRequest(
+                            $rover,
+                            $camera,
+                            $sol,
+                            $this->inputData ?: new FileInputData(__DIR__ . '/initData.yml')
+                        )
                     )
                 )
             );
-        } catch (Exception $e) {
-            $responseType->render(['Error' => $e->getMessage()]);
+        } catch (MarsRoverException $e) {
+            return $responseType->render([
+                'Error' => $e->getMessage(),
+            ]);
         }
     }
 }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace MarsRovers\Request;
 
+use MarsRovers\Exception\BadInputException;
 use MarsRovers\Model\Rover\Rover;
 use MarsRovers\Service\Data\InputDataInterface;
-use Exception;
+use MarsRovers\Validator\PictureValidator;
 
 class Picture
 {
@@ -17,6 +18,9 @@ class Picture
     private $sol;
     private $data;
 
+    /**
+     * @throws BadInputException
+     */
     public function __construct(string $roverName, string $cameraName, int $sol, InputDataInterface $data)
     {
         $this->roverName = $roverName;
@@ -24,25 +28,12 @@ class Picture
         $this->sol = $sol;
         $this->data = $data;
 
-        if (!$this->buildRequest()) {
-            throw new Exception('Wrong rover or camera');
-        }
-    }
-
-    public function buildRequest(): bool
-    {
-        return $this->setRover() && $this->setCamera();
-    }
-
-    private function setRover(): bool
-    {
-        if (!$this->validateRover()) {
-            return false;
+        if (!PictureValidator::validate($roverName, $cameraName, $data)) {
+            throw new BadInputException();
         }
 
         $this->rover = $this->data->getRovers()[$this->roverName];
-
-        return true;
+        $this->rover->setActiveCamera($this->cameraName);
     }
 
     public function getRover(): Rover
@@ -53,27 +44,5 @@ class Picture
     public function getSol(): int
     {
         return $this->sol;
-    }
-
-    private function setCamera(): bool
-    {
-        if (!$this->validateCamera()) {
-            return false;
-        }
-
-        $this->rover->setActiveCamera($this->cameraName);
-
-        return true;
-    }
-
-    private function validateRover(): bool
-    {
-        return isset($this->data->getRovers()[$this->roverName]);
-    }
-
-    private function validateCamera(): bool
-    {
-
-        return $this->rover->cameraAvailable($this->cameraName);
     }
 }
