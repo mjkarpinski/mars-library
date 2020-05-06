@@ -50,7 +50,7 @@ class FileInputData implements InputDataInterface
                 $availableCameras[strtoupper($camera)] = $this->cameras[$camera];
             }
 
-            $this->rovers[strtoupper($name)] = RoverFactory::create(
+            $this->rovers[strtolower($name)] = RoverFactory::create(
                 $name,
                 $availableCameras,
                 DateTimeImmutable::createFromFormat(
